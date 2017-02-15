@@ -10,6 +10,7 @@
 
   <script>
     $(function () {
+      var access_token, base_uri;
       init();
       console.log(result);
 
@@ -21,16 +22,63 @@
             var pair = vars[i].split("=");
             query_string[pair[0]] = pair[1];
         }
+        console.log(query_string);
         if (typeof(query_string.access_token) != "undefined") {
-            var result = new Object();
-            result.state = query_string.state;
-            result.scope = query_string.scope;
-            result.access_token = query_string.access_token;
-            result.expires_in = query_string.expires_in;
-            result.resource_server_base_uri = query_string.resource_server_base_uri;
-            result.token_type = query_string.token_type;
+            access_token = query_string.access_token;
+            console.log("access_token: " + access_token);
+            base_uri = query_string.resource_server_base_uri;
+            console.log("base_uri: " + base_uri);
         }
       }
+
+      function getContactsActive(){
+          var contactsActivePayload = {
+              // Not using this, for now.
+          }
+
+          $.ajax({
+              url: base_uri + '/services/v8.0/contacts/active',
+              type: 'GET',
+              headers: {
+                  Authorization: 'bearer ' + access_token
+              },
+              success: function(result, status, statusCode){
+                  console.log(result.resultSet.activeContacts);
+
+                  $('#count').html('Contact Count: ' + result.resultSet.activeContacts.length);
+                  var tableHeaders = ['#','Contact Id', 'Skill', 'State', 'From', 'To', 'Agent Id']
+
+                  var table = '<table border=&quot;1&quot;><tr>';
+
+                  // Add Headers
+                  $.each(tableHeaders, function(i, headers){
+                      table += '<th>'+ headers + '</th>';
+                  });
+                  table += '</tr>';
+
+                  // Add data to table
+                  $.each(result.resultSet.activeContacts, function(index, contact){
+                      table += '<tr><td>' + (index + 1) + '</td>';
+                      table += '<td>' + contact.contactId + '</td>';
+                      table += '<td>' + contact.skillName + '</td>';
+                      table += '<td>' + contact.state + '</td>';
+                      table += '<td>' + contact.fromAddr + '</td>';
+                      table += '<td>' + contact.toAddr + '</td>';
+                      table += '<td>' + contact.agentId + '</td></tr>';
+                  });
+                  table += '</table>';
+                  $('#output').html(table);
+              },
+              error: function(xhr, status, errorThrown){
+                  console.log(xhr);
+                  console.log(status);
+                  console.log(errorThrown);
+                  $('#output').text('failed');
+              }
+
+          })
+      }
+
     });
 
 
