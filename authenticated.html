@@ -15,6 +15,7 @@
           query_string[pair[0]] = pair[1];
       }
       if (typeof(query_string.access_token) != "undefined") {
+          var result = "";
           result.state = query_string.state;
           result.scope = query_string.scope;
           result.access_token = query_string.access_token;
