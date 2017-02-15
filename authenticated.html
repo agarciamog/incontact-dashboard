@@ -25,7 +25,7 @@
         }
         console.log(query_string);
         if (typeof(query_string.access_token) != "undefined") {
-            access_token = query_string.access_token;
+            access_token = decodeURIComponent(query_string.access_token);
             console.log("access_token: " + access_token);
             base_uri = decodeURIComponent(query_string.resource_server_base_uri);
             console.log("base_uri: " + base_uri);
