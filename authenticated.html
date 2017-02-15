@@ -6,7 +6,6 @@
   <h1>AUTHENTICATED</h1>
   <div id="output"></div>
   <script>
-    console.log("Not In Ready");
     $(function () {
       console.log("In Ready, query_string:");
       var query_string = {};
@@ -17,11 +16,11 @@
           query_string[pair[0]] = pair[1];
       }
       console.log(query_string);
-      console.log(JSON.stringify(query_string));
-      console.log("access_token: " + query_string.access_token);
-      console.log("typeof(query_string.access_token): " + typeof(query_string.access_token));
+      //console.log(JSON.stringify(query_string));
+      //console.log("access_token: " + query_string.access_token);
+      //console.log("typeof(query_string.access_token): " + typeof(query_string.access_token));
       if (typeof(query_string.access_token) != "undefined") {
-          var result;
+          var result = new Object();
           result.state = query_string.state;
           result.scope = query_string.scope;
           result.access_token = query_string.access_token;
