@@ -27,7 +27,7 @@
         if (typeof(query_string.access_token) != "undefined") {
             access_token = query_string.access_token;
             console.log("access_token: " + access_token);
-            base_uri = query_string.resource_server_base_uri;
+            base_uri = atoa(query_string.resource_server_base_uri);
             console.log("base_uri: " + base_uri);
         }
       }
