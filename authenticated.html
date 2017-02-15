@@ -6,7 +6,9 @@
   <h1>AUTHENTICATED</h1>
   <div id="output"></div>
   <script>
+    console.log("Not In Ready");
     $(function () {
+      console.log("In Ready");
       var query_string = {};
       var query = window.location.search.substring(1);
       var vars = query.split("&");
@@ -14,6 +16,8 @@
           var pair = vars[i].split("=");
           query_string[pair[0]] = pair[1];
       }
+      console.log("query_string: " + query_string);
+      console.log("access_token: " + query_string.access_token);
       if (typeof(query_string.access_token) != "undefined") {
           var result = "";
           result.state = query_string.state;
