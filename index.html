@@ -6,7 +6,7 @@
   <script>
       var application = "dashboard";
       var vendor = "agarciamog.github.io";
-      var client_id = window.btoa(application + "@" + vendor);
+      var client_id = application + "@" + vendor;
       var implicitURI = "https://api.incontact.com/InContactAuthorizationServer/Authenticate";
       var token_scope = "AdminApi AgentApi RealTimeDataAPI ReportingAPI";
       var redirect_uri = "https://agarciamog.github.io/incontact-dashboard/authenticated";
