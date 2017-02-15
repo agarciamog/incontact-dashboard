@@ -20,7 +20,7 @@
       console.log("access_token: " + query_string.access_token);
       console.log("typeof(query_string.access_token): " + typeof(query_string.access_token));
       if (typeof(query_string.access_token) != "undefined") {
-          var result = "";
+          var result;
           result.state = query_string.state;
           result.scope = query_string.scope;
           result.access_token = query_string.access_token;
