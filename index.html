@@ -2,7 +2,7 @@
   <title>implicit-auth</title>
 </head>
 <body>
-  <h1 hidden="false">Redirect...</h1>
+  <h1>Redirect...</h1>
   <script>
       var application = "dashboard";
       var vendor = "agarciamog.github.io";
@@ -21,8 +21,8 @@
         url = url + "&scope=" + encodeURIComponent(token_scope);
         window.location.href = url;
       }
-
-      RedirectToAuthPage();
+      
+      setTimeout(RedirectToAuthPage, 2000);
   </script>
 
 </body>
