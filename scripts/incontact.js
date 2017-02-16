@@ -54,8 +54,7 @@ $(function () {
                   table += '<td>' + contact.state + '</td>';
                   table += '<td>' + contact.fromAddr + '</td>';
                   table += '<td>' + contact.toAddr + '</td>';
-                  table += '<td>' + contact.firstName + ' ' + contact.lastName
-                                  + ' (' + contact.agentId + ')</td></tr>';
+                  table += '<td>' + contact.firstName + ' ' + contact.lastName + '</td></tr>';
               });
               table += '</table>';
               $('#output').html(table);
