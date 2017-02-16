@@ -33,11 +33,10 @@ $(function () {
               Authorization: 'bearer ' + access_token
           },
           success: function(result, status, statusCode){
-              console.log(result);
               console.log(result.resultSet.activeContacts);
 
               $('#count').html('Contact Count: ' + result.resultSet.activeContacts.length);
-              var tableHeaders = ['#','Contact Id', 'Skill', 'State', 'From', 'To', 'Agent Id']
+              var tableHeaders = ['#','Contact Id', 'Skill', 'State', 'From', 'To', 'Agent']
 
               var table = '<table border=&quot;1&quot;><tr>';
 
@@ -55,7 +54,8 @@ $(function () {
                   table += '<td>' + contact.state + '</td>';
                   table += '<td>' + contact.fromAddr + '</td>';
                   table += '<td>' + contact.toAddr + '</td>';
-                  table += '<td>' + contact.agentId + '</td></tr>';
+                  table += '<td>' + contact.firstName + ' ' + contact.lastName
+                                  + ' (' + contact.agentId + ')</td></tr>';
               });
               table += '</table>';
               $('#output').html(table);
