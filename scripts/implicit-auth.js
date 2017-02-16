@@ -3,7 +3,7 @@ var vendor = "agarciamog.github.io";
 var client_id = application + "@" + vendor;
 var implicitURI = "https://api.incontact.com/InContactAuthorizationServer/Authenticate";
 var token_scope = "RealTimeApi";
-var redirect_uri = "https://agarciamog.github.io/incontact-dashboard/redirect";
+var redirect_uri = "https://agarciamog.github.io/incontact-dashboard/dashboard";
 var state_object = "myState";
 
 function RedirectToAuthPage() {
