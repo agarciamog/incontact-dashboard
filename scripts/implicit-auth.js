@@ -16,4 +16,4 @@ function RedirectToAuthPage() {
   window.location.href = url;
 }
 
-setTimeout(RedirectToAuthPage, 2000);
+setTimeout(RedirectToAuthPage, 1000);
