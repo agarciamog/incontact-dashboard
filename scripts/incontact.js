@@ -33,6 +33,7 @@ $(function () {
               Authorization: 'bearer ' + access_token
           },
           success: function(result, status, statusCode){
+              console.log(result);
               console.log(result.resultSet.activeContacts);
 
               $('#count').html('Contact Count: ' + result.resultSet.activeContacts.length);
