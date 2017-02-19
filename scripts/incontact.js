@@ -1,10 +1,26 @@
-function Dashboard (el) {
-  //Variables
-  this.el = el;
-  var access_token, base_uri;
+// file:///C:/Users/Alberto/Documents/GitHub/incontact-dashboard/dashboard.html?state=myState&scope=RealTimeApi%2cReportingApi&access_token=y9k7KdSTy%2bmFHylTNT0h9gS3QwaN2ISaDRaY7o%2bvDJdwUXquZvjcB2gOvA95Cc%2fvda3eu%2fTjpvnIt4s2VMpAif6KJ%2f23phLdv9sqt4Ohg26bU%2b%2fyGMAXnpjZn8chLJyB3%2fNAxWsCTMV%2brImZhU1HAS0JbBw6d6QFn8OuWCnZ0hWN6ALeZvP0aviZCA%2fmmTEjOf%2fMRixO3moEfEGa2r%2bZNWn%2fBtigHoX6M9474Z2uVLfxRQimITO3Mvc3AfKRZbiVDIrFlVX3W10nzYfOjx0Z0tXORpCdIMLMpgl0lqCn1Z32vQQ2CrSbm1QpmEXDsuuSMCx7L2cjS8OFeM2moV5soeMX%2fICAI1NUTaekEYenbrePS6wSd8qac1EAeBdaDrBE%2bCHLD%2fgHndA2AA2y6r%2bDzg%3d%3d&expires_in=5184000&resource_server_base_uri=https%3a%2f%2fapi-b2.incontact.com%2finContactAPI%2f&token_type=bearer
 
-  //Functions
-  this.init = function(){
+//********************************
+// Reusable Dashboard function
+//********************************
+function Dashboard (el) {
+  /**************************************
+   ************* Variables **************
+   **************************************/
+  this.el = el;
+  var self = this;
+  var access_token, base_uri;
+  var contactCount = 0;
+
+
+
+  /**************************************
+   ************* Functions **************
+   **************************************/
+
+  // Instantiate Dashboard
+  //********************************
+  this.init = function() {
     var query_string = {};
     var query = window.location.search.substring(1);
     var vars = query.split("&");
@@ -19,76 +35,102 @@ function Dashboard (el) {
         base_uri = decodeURIComponent(query_string.resource_server_base_uri);
         console.log("base_uri: " + base_uri);
     }
-  },
-}
 
-$(function () {
-  var dashboard = new Dashboard();
-  dashboard.init();
-  //setInterval(getContactsActive, 3000);
-  //setInterval(timeStamp, 3000);
+    // TODO Add event listeners for each dashboard
+    //      module.
+  }
 
-  function getContactsActive(){
-      var contactsActivePayload = {
-          // Not using this, for now.
-      }
-
+  // Get Active Contacts and display
+  // in table.
+  //********************************
+  this.getContactsActive = function() {
       $.ajax({
           url: base_uri + 'services/v8.0/contacts/active',
           type: 'GET',
           headers: {
               Authorization: 'bearer ' + access_token
           },
-          success: function(result, status, statusCode){
-              console.log(result.resultSet.activeContacts);
-
-              $('#count').html('Contact Count: ' + result.resultSet.activeContacts.length);
-              var tableHeaders = ['#','Contact Id', 'Skill', 'State', 'From', 'To', 'Agent']
-
-              var table = '<table border=&quot;1&quot;><tr>';
-
-              // Add Headers
-              $.each(tableHeaders, function(i, headers){
-                  table += '<th>'+ headers + '</th>';
-              });
-              table += '</tr>';
-
-              // Add data to table
-              $.each(result.resultSet.activeContacts, function(index, contact){
-                  table += '<tr><td>' + (index + 1) + '</td>';
-                  table += '<td>' + contact.contactId + '</td>';
-                  table += '<td>' + contact.skillName + '</td>';
-                  table += '<td>' + contact.state + '</td>';
-                  table += '<td>' + contact.fromAddr + '</td>';
-                  table += '<td>' + contact.toAddr + '</td>';
-                  table += '<td>' + contact.firstName + ' ' + contact.lastName + '</td></tr>';
-              });
-              table += '</table>';
-              $('#output').html(table);
-          },
-          error: function(xhr, status, errorThrown){
-              console.log(xhr);
-              console.log(status);
-              console.log(errorThrown);
-              $('#output').text('failed');
-          }
-
+          context: self,
+          success: self.createActiveContactsTable,
+          error: self.resultWrite
       })
   }
 
-  function timeStamp(){
+  // Create active contacts table.
+  //********************************
+  this.createActiveContactsTable = function(result, status, statusCode){
+    var tableHeaders = ['#','Contact Id', 'Skill', 'State', 'From', 'To', 'Agent'];
+
+    this.resultWrite(result, status, statusCode);
+    if(typeof(result) != "undefined"){
+      this.setContactCount(result.resultSet.activeContacts.length);
+      var table = this.createTable(tableHeaders);
+
+      // Add data to table
+      var tableBody = ""
+      $.each(result.resultSet.activeContacts, function(index, contact){
+          tableBody += '<tr><td>' + (index + 1) + '</td>';
+          tableBody += '<td>' + contact.contactId + '</td>';
+          tableBody += '<td>' + contact.skillName + '</td>';
+          tableBody += '<td>' + contact.state + '</td>';
+          tableBody += '<td>' + contact.fromAddr + '</td>';
+          tableBody += '<td>' + contact.toAddr + '</td>';
+          tableBody += '<td>' + contact.firstName + ' ' + contact.lastName + '</td></tr>';
+      });
+      $('#output').html(table).find('tbody').append(tableBody);
+    }
+    else{ // No contacts for period.
+      this.setContactCount(0);
+      var table = this.createTable(tableHeaders);
+      $('#output').html(table);
+    }
+  };
+
+  // Set Contact Count
+  //********************************
+  this.setContactCount = function(count){
+    contactCount = count;
+    $('#count').html('Contact Count: ' + contactCount);
+  };
+
+  // Create table and return.
+  //********************************
+  this.createTable = function(tableHeaders){
+    var table = '<table border=&quot;1&quot;><thead><tr>';
+
+    // Add Headers
+    $.each(tableHeaders, function(i, header){
+        table += '<th>'+ header + '</th>';
+    });
+    table += '</thead></tr>';
+    table += '<tbody></tbody></table>';
+
+    return table;
+  };
+
+  // Write ajax result to console.
+  //********************************
+  this.resultWrite = function(result, status, statusCode){
+    console.log(result);
+    console.log(status);
+    console.log(statusCode);
+  };
+
+  // Return current time stamp.
+  //********************************
+  this.timeStamp = function() {
         var now = new Date();
         var date = [ now.getMonth() + 1, now.getDate(), now.getFullYear() ];
         var time = [ now.getHours(), now.getMinutes(), now.getSeconds() ];
         var suffix = ( time[0] < 12 ) ? "AM" : "PM";
 
-      // Convert hour from military time
+        // Convert hour from military time
         time[0] = ( time[0] < 12 ) ? time[0] : time[0] - 12;
 
-      // If hour is 0, set it to 12
+        // If hour is 0, set it to 12
         time[0] = time[0] || 12;
 
-      // If seconds and minutes are less than 10, add a zero
+        // If seconds and minutes are less than 10, add a zero
         for ( var i = 1; i < 3; i++ ) {
           if ( time[i] < 10 ) {
             time[i] = "0" + time[i];
@@ -96,6 +138,14 @@ $(function () {
         }
 
       $('#timeStamp').html("<br><br> Updated on " + date.join("/") + " " + time.join(":") + " " + suffix);
-  }
+  };
+}
 
+// Document Ready - init Dashboard
+//********************************
+$(function () {
+  var dashboard = new Dashboard();
+  dashboard.init();
+  setInterval(dashboard.getContactsActive, 3000);
+  setInterval(dashboard.timeStamp, 3000);
 });
