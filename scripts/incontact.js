@@ -1,10 +1,10 @@
-$(function () {
+function Dashboard (el) {
+  //Variables
+  this.el = el;
   var access_token, base_uri;
-  init();
-  setInterval(getContactsActive, 3000);
-  setInterval(timeStamp, 3000);
 
-  function init(){
+  //Functions
+  this.init = function(){
     var query_string = {};
     var query = window.location.search.substring(1);
     var vars = query.split("&");
@@ -19,7 +19,14 @@ $(function () {
         base_uri = decodeURIComponent(query_string.resource_server_base_uri);
         console.log("base_uri: " + base_uri);
     }
-  }
+  },
+}
+
+$(function () {
+  var dashboard = new Dashboard();
+  dashboard.init();
+  //setInterval(getContactsActive, 3000);
+  //setInterval(timeStamp, 3000);
 
   function getContactsActive(){
       var contactsActivePayload = {
